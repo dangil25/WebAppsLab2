@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel List</title>
+
+    <!-- Materialize CSS and Icons-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
+    <link rel="stylesheet" href="/stylesheets/stuffStyle.css">
+    
+</head>
+<body>
+    <div class="container">
+        <div class="section" id="travelList">
+            <h3>Travel List:</h3>
+            <table>
+                <thead>
+
+                    <tr>
+                        <th>Trip</th>
+                        <th>Arrival Location</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th></th>
+                    </tr>
+
+                </thead>
+                <tbody>
+
+                    <tr>
+                        <td>Canada, February Break</td>
+                        <td>Quebec</td>
+                        <td>02/14/23</td>
+                        <td>02/23/23</td>
+                        <td>
+                            <a class="btn-small waves-effect waves-light" href="/list/item1">
+                                <i class="material-icons right">edit</i>
+                                Info/Edit
+                            </a>
+                            <a class="btn-small waves-effect waves-light red">
+                                <i class="material-icons right">delete</i>
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>France, Summer</td>
+                        <td>Paris</td>
+                        <td>06/24/23</td>
+                        <td>07/12/23</td>
+                        <td>
+                            <a class="btn-small waves-effect waves-light" href="/list/item2">
+                                <i class="material-icons right">edit</i>
+                                Info/Edit
+                            </a>
+                            <a class="btn-small waves-effect waves-light red">
+                                <i class="material-icons right">delete</i>
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>Mexico, Thanksgiving Break</td>
+                        <td>Cancun</td>
+                        <td>11/20/23</td>
+                        <td>11/29/23</td>
+                        <td>
+                            <a class="btn-small waves-effect waves-light" href="/list/item3">
+                                <i class="material-icons right">edit</i>
+                                Info/Edit
+                            </a>
+                            <a class="btn-small waves-effect waves-light red">
+                                <i class="material-icons right">delete</i>
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+        <div section = "Add New">
+            <h5>Add a Trip:</h5>
+            <form>
+                <div class = "row">
+                    <div class = "Name col s6">
+                        <input placeholder="Trip Name:" id="Trip Name" type="text" class="validate s1">
+                    </div>
+                    
+                    <div class = "Location col s6">
+                        <input placeholder="Arrival Location:" id="Location" type="text" class="validate s4">
+                    </div>
+                    <br>
+                </div>
+                
+                <div class = "row">
+                    <div class = "Start Date col s6">
+                        Start Date:
+                        <input placeholder="Start Date" id="Start Date" type="date" class="validate">
+                    </div>
+
+                    <div class = "End Date col s6">
+                        End Date:
+                        <input placeholder="End Date" id="End Date" type="date" class="validate">
+                    </div>
+                    
+                    <br>
+                </div>
+                    
+                
+                <button class="btn waves-effect waves-light row push-s2" type="submit" name="action">Submit
+                    <i class="material-icons right">send</i>
+                </button>
+            </form>
+        </div>
+
+        
+
+    <!-- Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- initialize Materialize elements -->
+    <script> M.AutoInit();</script>
+
+    
+</body>
+</html>
