@@ -10,4 +10,4 @@ db.execute('SELECT 1 + 1 AS solution',
     }
 );
 //Optional: close the connection after queue is emptying.
-db.end();
+db.end(); 
