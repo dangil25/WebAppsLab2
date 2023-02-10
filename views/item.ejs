@@ -11,7 +11,8 @@
 
     <link rel="stylesheet" href="/stylesheets/stuffStyle.css">
 </head>
-<body>
+<tbody>
+    
     <div class = "container">
         <h2>Trip Details:</h2>
 
@@ -26,26 +27,26 @@
         <table>
             <tr>
                 <th>Trip Name: </th>
-                <td>Canada, February Break</td>
+                <td> <%= name %></td>
             </tr>
 
             <tr>
                 <th>Arrival Location: </th>
-                <td>Quebec</td>
+                <td> <%= arrival %></td>
             </tr>
 
             <tr>
                 <th>Arrival Date: </th>
-                <td>02/14/23</td>
+                <td> <%= a_date %> </td>
             </tr>
 
             <tr>
                 <th>End Date: </th>
-                <td>02/23/23</td>
+                <td><%= d_date %></td>
             </tr>
             <tr>
                 <th>Locations to visit: </th>
-                <td>Montreal, Lake Eire</td>
+                <td><%=locations %></td>
             </tr>
         </table>
         
@@ -130,7 +131,7 @@
 
     <!-- initialize Materialize elements -->
     <script> M.AutoInit();</script>
-</body>
+</tbody>
 
 
 
