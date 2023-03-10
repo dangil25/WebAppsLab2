@@ -23,34 +23,33 @@
             </a>
         </div>
 
-
         <table>
             <tr>
                 <th>Trip Name: </th>
                 <td> <%= name %></td>
             </tr>
-
+    
             <tr>
                 <th>Arrival Location: </th>
                 <td> <%= arrival %></td>
             </tr>
-
+    
             <tr>
                 <th>Arrival Date: </th>
                 <td> <%= a_date %> </td>
             </tr>
-
+    
             <tr>
                 <th>End Date: </th>
                 <td><%= d_date %></td>
             </tr>
             <tr>
                 <th>Locations to visit: </th>
-                <td><%=locations %></td>
+                <td><%= locations %></td>
             </tr>
         </table>
         
-        <br>
+        
 
         <div class = "row flow-text">
             <a class="btn-large waves-effect waves-light flow-text col s2 green modal-trigger" href="#modal1">
@@ -61,16 +60,17 @@
             <div id="modal1" class="modal">
                 <div class="modal-content">
                     <h4>Edit Trip</h4>
-                    <form>
+                    <form method = "post" action="/item/<%= id %>">
                         <div class = "row">
                             <div class = "Name col s6">
                                 <h6>Trip Name:</h6>
-                                <input placeholder = "Trip Name" value="Canada, February Break" id="Trip Name" type="text" class="validate s1">
+                                <input type = "text" name = "name" id = "nameInput" class = "validate" date-length = "64"
+                                       value= <%= name %> required>
                             </div>
                             
                             <div class = "Location col s6">
                                 <h6>Locations:</h6>
-                                <input value="Quebec" id="Location" type="text" class="validate s4">
+                                <input value= <%= arrival %> id="Location" type="text" class="validate s4">
                             </div>
                             <br>
                         </div>
@@ -78,19 +78,19 @@
                         <div class = "row">
                             <div class = "Start Date col s6">
                                 <h6>Start Date:</h6>
-                                <input value="02/14/23" id="Start Date" type="text" class="validate" onfocus = "(this.type='date')">
+                                <input value= <%= a_date %> id="Start Date" type="date" class="validate" onfocus = "(this.type='date')">
                             </div>
         
                             <div class = "End Date col s6">
                                 <h6>End Date:</h6>
-                                <input value="02/23/23" id="End Date" type="text" class="validate" onfocus = "(this.type='date')">
+                                <input value= <%= d_date %> id="End Date" type="text" class="validate" onfocus = "(this.type='date')">
                             </div>                            
                             <br>
                         </div>
 
                         <div class = "row">
                             <h6>Locations to visit:</h6>
-                            <input value = "Montreal, Lake Eire" id = "Locations to visit" type = "text" class = "validate">
+                            <input value = <%= locations %> id = "Locations to visit" type = "text" class = "validate">
 
                         </div>
                             
@@ -114,7 +114,8 @@
                 
               </div>
 
-            <a class="btn-large waves-effect waves-light flow-text col push-s8 col s2 red" href="item1.html">
+            <a class="btn-large waves-effect waves-light flow-text col push-s8 col s2 red" 
+                href="/list/item/<%= id %> + /delete">
                 <i class="material-icons left">delete</i>
                 Delete
             </a>

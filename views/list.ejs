@@ -13,122 +13,97 @@
     <link rel="stylesheet" href="/stylesheets/stuffStyle.css">
     
 </head>
-<body>
-    <div class="container">
-        <div class="section" id="travelList">
-            <h3>Travel List:</h3>
-            <table>
-                <thead>
+<tbody>
+    
 
+}
+<div class="container">
+    <div class="section" id="travelList">
+        <h3>Travel List:</h3>
+        <table>
+            <thead>
+
+                <tr>
+                    <th>Trip</th>
+                    <th>Arrival Location</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th></th>
+                </tr>
+
+            </thead>
+            <tbody>
+
+                <% for (let i = 0; i < inventory.length; i++) { %>
                     <tr>
-                        <th>Trip</th>
-                        <th>Arrival Location</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th></th>
-                    </tr>
-
-                </thead>
-                <tbody>
-
-                    <tr>
-                        <td>Canada, February Break</td>
-                        <td>Quebec</td>
-                        <td>02/14/23</td>
-                        <td>02/23/23</td>
+                        <td> <%= inventory[i].name %></td>
+                        <td> <%= inventory[i].arrival %></td>
+                        <td> <%= inventory[i].a_date %></td>
+                        <td> <%= inventory[i].d_date %></td>
                         <td>
-                            <a class="btn-small waves-effect waves-light" href="/list/item/1">
-                                <i class="material-icons right">edit</i>
-                                Info/Edit
+                            <a class = "btn-small waves-effect waves-light" 
+                                    href = <%= "/list/item/" + inventory[i].id %>>
+                                <i class = "material-icons right">edit</i>Info/Edit
                             </a>
-                            <a class="btn-small waves-effect waves-light red">
-                                <i class="material-icons right">delete</i>
-                                Delete
+                
+                            <a class = "btn-small waves-effect waves-light red"
+                                href = "/list/item/<%=inventory[i].id %> + /delete" %>>
+                                <i class = "material-icons right">delete</i>Delete
                             </a>
+                
                         </td>
                     </tr>
+                <% } %>
 
-                    <tr>
-                        <td>France, Summer</td>
-                        <td>Paris</td>
-                        <td>06/24/23</td>
-                        <td>07/12/23</td>
-                        <td>
-                            <a class="btn-small waves-effect waves-light" href="/list/item/2">
-                                <i class="material-icons right">edit</i>
-                                Info/Edit
-                            </a>
-                            <a class="btn-small waves-effect waves-light red">
-                                <i class="material-icons right">delete</i>
-                                Delete
-                            </a>
-                        </td>
-                    </tr>
+            </tbody>
+        </table>
+    </div>
 
-                    <tr>
-                        <td>Mexico, Thanksgiving Break</td>
-                        <td>Cancun</td>
-                        <td>11/20/23</td>
-                        <td>11/29/23</td>
-                        <td>
-                            <a class="btn-small waves-effect waves-light" href="/list/item/3">
-                                <i class="material-icons right">edit</i>
-                                Info/Edit
-                            </a>
-                            <a class="btn-small waves-effect waves-light red">
-                                <i class="material-icons right">delete</i>
-                                Delete
-                            </a>
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
-        </div>
-
-        <div section = "Add New">
-            <h5>Add a Trip:</h5>
-            <form>
-                <div class = "row">
-                    <div class = "Name col s6">
-                        <input placeholder="Trip Name:" id="Trip Name" type="text" class="validate s1">
-                    </div>
-                    
-                    <div class = "Location col s6">
-                        <input placeholder="Arrival Location:" id="Location" type="text" class="validate s4">
-                    </div>
-                    <br>
+    <div section = "Add New">
+        <h5>Add a Trip:</h5>
+        <form method = "post" action="/list">
+            <div class = "row">
+                <div class = "Name col s6">
+                    <input name = "name" placeholder="Trip Name:" id="Trip Name" type="text" class="validate s1" required>
                 </div>
                 
-                <div class = "row">
-                    <div class = "Start Date col s6">
-                        Start Date:
-                        <input placeholder="Start Date" id="Start Date" type="date" class="validate">
-                    </div>
-
-                    <div class = "End Date col s6">
-                        End Date:
-                        <input placeholder="End Date" id="End Date" type="date" class="validate">
-                    </div>
-                    
-                    <br>
+                <div class = "Location col s6">
+                    <input name = "arrival" placeholder="Arrival Location:" id="Location" type="text" class="validate s4" required>
                 </div>
-                    
+                <br>
+            </div>
+            
+            <div class = "row">
+                <div class = "Start Date col s6">
+                    Start Date:
+                    <input name = "sdate" placeholder="Start Date" id="Start Date" type="date" class="validate" required>
+                </div>
+
+                <div class = "End Date col s6">
+                    End Date:
+                    <input name = "edate" placeholder="End Date" id="End Date" type="date" class="validate" required>
+                </div>
                 
-                <button class="btn waves-effect waves-light row push-s2" type="submit" name="action">Submit
-                    <i class="material-icons right">send</i>
-                </button>
-            </form>
-        </div>
-
-        
-
-    <!-- Materialize JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-    <!-- initialize Materialize elements -->
-    <script> M.AutoInit();</script>
+                <br>
+            </div>
+                
+            
+            <button class="btn waves-effect waves-light row push-s2" type="submit" name="action">Submit
+                <i class="material-icons right">send</i>
+            </button>
+        </form>
+    </div>
 
     
-</body>
+
+<!-- Materialize JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+<!-- initialize Materialize elements -->
+<script> M.AutoInit();</script>
+
+    
+
+    
+</tbody>
 </html>
