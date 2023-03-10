@@ -48,7 +48,7 @@ const update_item_sql = `
         arrival = ?,
         a_date = ?,
         d_date = ?,
-        locations = ?a
+        locations = ?
     WHERE
         id = ?
 

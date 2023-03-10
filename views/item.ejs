@@ -60,43 +60,43 @@
             <div id="modal1" class="modal">
                 <div class="modal-content">
                     <h4>Edit Trip</h4>
-                    <form method = "post" action="/item/<%= id %>">
+                    <form method = "post" action="/list/item/<%= id %>">
                         <div class = "row">
-                            <div class = "Name col s6">
+                            <div class = "input-field col s6">
                                 <h6>Trip Name:</h6>
-                                <input type = "text" name = "name" id = "nameInput" class = "validate" date-length = "64"
-                                       value= <%= name %> required>
+                                <input type = "text" name = "name" class = "validate" date-length = "32"
+                                       value= "<%= name %>" required>
                             </div>
                             
-                            <div class = "Location col s6">
-                                <h6>Locations:</h6>
-                                <input value= <%= arrival %> id="Location" type="text" class="validate s4">
+                            <div class = "input-field col s6">
+                                <h6>Arrival:</h6>
+                                <input value= "<%= arrival %>" name ="arrival" type="text" class="validate">
                             </div>
                             <br>
                         </div>
                         
                         <div class = "row">
-                            <div class = "Start Date col s6">
+                            <div class = "input-field col s6">
                                 <h6>Start Date:</h6>
-                                <input value= <%= a_date %> id="Start Date" type="date" class="validate" onfocus = "(this.type='date')">
+                                <input value= "<%= a_date %>" name="a_date" type="date" class="validate" >
                             </div>
         
-                            <div class = "End Date col s6">
+                            <div class = "input-field col s6">
                                 <h6>End Date:</h6>
-                                <input value= <%= d_date %> id="End Date" type="text" class="validate" onfocus = "(this.type='date')">
+                                <input value= "<%= d_date %>" name="d_date" type="date" class="validate" >
                             </div>                            
                             <br>
                         </div>
 
                         <div class = "row">
                             <h6>Locations to visit:</h6>
-                            <input value = <%= locations %> id = "Locations to visit" type = "text" class = "validate">
+                            <input value = "<%= locations %>" name = "locations" type = "text" class = "validate">
 
                         </div>
                             
                         <div class = "modal-footer">
                             <div class="modal-footer">
-                                <a href="#!" class="modal-close waves-effect waves-green green btn-flat">
+                                <button class="modal-close waves-effect waves-green green btn-flat" type = "submit">
                                     <span class="white-text">Submit</span>
                                     <i class="material-icons right" style ="color:white">send</i>
                                 </a>
