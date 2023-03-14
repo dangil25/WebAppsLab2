@@ -11,6 +11,7 @@ const create_stuff_table_sql = `
         a_date DATE NULL,
         d_date DATE NULL,
         locations VARCHAR(150) NULL,
+        userid VARCHAR(50) NULL,
         PRIMARY KEY (id)
     );
 `

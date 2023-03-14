@@ -3,19 +3,54 @@ const db = require("./db/db_connection");
 const express = require( "express" );
 const app = express();
 const port = 8080;
-const logger = require("morgan");
+const dotenv = require('dotenv');
+const { requiresAuth } = require('express-openid-connect');
 
+
+dotenv.config();
+const logger = require("morgan");
+const { auth } = require('express-openid-connect');
+const config = {
+    authRequired: false,
+    auth0Logout: true,
+    secret: process.env.AUTH0_SECRET,
+    baseURL: process.env.AUTH0_BASE_URL,
+    clientID: process.env.AUTH0_CLIENT_ID,
+    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL
+  };
+  
+  // auth router attaches /login, /logout, and /callback routes to the baseURL
+app.use(auth(config));
 app.use(logger("dev"));
 app.use(express.static(__dirname + '/public'));
 app.set("views", __dirname + "/views")
 app.set("view engine", "ejs")
 app.use( express.urlencoded({ extended: false }) );
 
+app.use((req, res, next) => {
+    res.locals.isLoggedIn = req.oidc.isAuthenticated();
+    res.locals.user = req.oidc.user;
+    next();
+})
+app.get('/profile', requiresAuth(), (req, res) => {
+    res.send(JSON.stringify(req.oidc.user));
+  });
+
+app.get('/authtest', (req, res) => {
+    res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
+  });
+
+
 
 const read_stuff_all_sql = 
-`Select
+`SELECT
     id, name, arrival, a_date, d_date, locations
-From stuff`
+FROM
+    stuff
+WHERE
+    userid = ?
+`
+
 
 const read_item_sql=
     `Select
@@ -23,7 +58,10 @@ const read_item_sql=
     From 
         stuff
     Where 
-        stuff.id = ?`
+        id = ?
+    And
+        userid = ?        
+`
 
 const delete_item_sql = `
     delete
@@ -31,13 +69,15 @@ const delete_item_sql = `
         stuff
     where     
         id = ?
+    and
+        userid = ?
     `
 
 const insert_item_sql = `
     insert into stuff
-        (name, arrival, a_date, d_date)
+        (name, arrival, a_date, d_date, userid)
     values
-        (?, ?, ?, ?)
+        (?, ?, ?, ?, ?)
     `
 
 const update_item_sql = `
@@ -51,11 +91,13 @@ const update_item_sql = `
         locations = ?
     WHERE
         id = ?
+    AND
+        userid = ?
 
 `
 
 app.post("/list/item/:id", ( req, res) => {
-    db.execute(update_item_sql, [req.body.name, req.body.arrival, req.body.a_date, req.body.d_date, req.body.locations, req.params.id], (error, results) => {
+    db.execute(update_item_sql, [req.body.name, req.body.arrival, req.body.a_date, req.body.d_date, req.body.locations, req.params.id, req.oidc.user.email], (error, results) => {
         if (error)
             res.status(500).send(error);
         else {
@@ -64,13 +106,13 @@ app.post("/list/item/:id", ( req, res) => {
     });
 })
 
-app.get( "/", ( req, res ) => {
+app.get( "/", requiresAuth(), ( req, res ) => {
     console.log("GET /");
     res.render("index");
 } );
 
-app.get( "/list", ( req, res ) => {
-    db.execute(read_stuff_all_sql, (error, results) => {
+app.get( "/list", requiresAuth(), ( req, res ) => {
+    db.execute(read_stuff_all_sql, [req.oidc.user.email], (error, results) => {
         if (error){
             res.status(500).send(error);                            
         }else{
@@ -81,8 +123,8 @@ app.get( "/list", ( req, res ) => {
 } );
 
 // define a route for the item  detail page
-app.get( "/list/item/:id", ( req, res, next) => {
-    db.execute(read_item_sql, [req.params.id], (error, results) => {
+app.get( "/list/item/:id", requiresAuth(), ( req, res, next) => {
+    db.execute(read_item_sql, [req.params.id, req.oidc.user.email], (error, results) => {
         if (error){
             res.status(500).send(error);                            
         }else if (results.length === 0){
@@ -94,8 +136,8 @@ app.get( "/list/item/:id", ( req, res, next) => {
     })
 } );
 
-app.get("/list/item/:id/delete", ( req, res) => {
-    db.execute(delete_item_sql, [req.params.id], (error, results) => {
+app.get("/list/item/:id/delete", requiresAuth(), ( req, res) => {
+    db.execute(delete_item_sql, [req.params.id, req.oidc.user.email], (error, results) => {
         if (error)
             res.status(500).send(error);
         else {
@@ -104,8 +146,8 @@ app.get("/list/item/:id/delete", ( req, res) => {
     });
 })
 
-app.post("/list", ( req, res) => {
-    db.execute(insert_item_sql, [req.body.name, req.body.arrival, req.body.sdate, req.body.edate], (error, results) => {
+app.post("/list", requiresAuth(), ( req, res) => {
+    db.execute(insert_item_sql, [req.body.name, req.body.arrival, req.body.sdate, req.body.edate, req.oidc.user.email], (error, results) => {
         if (error)
             res.status(500).send(error);
         else{
