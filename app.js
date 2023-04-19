@@ -44,7 +44,7 @@ app.get('/authtest', (req, res) => {
 
 const read_stuff_all_sql = 
 `SELECT
-    id, name, arrival, a_date, d_date, locations
+    id, name, arrival, DATE_FORMAT(a_date, "%M %D, %Y") as a_date, DATE_FORMAT(d_date, "%M %D, %Y") as d_date, locations
 FROM
     stuff
 WHERE
@@ -54,7 +54,7 @@ WHERE
 
 const read_item_sql=
     `Select
-        id, name, arrival, a_date, d_date, locations
+        id, name, arrival, DATE_FORMAT(a_date, "%M %D, %Y") as a_date, DATE_FORMAT(d_date, "%M %D, %Y") as d_date, locations
     From 
         stuff
     Where 
