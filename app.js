@@ -1,4 +1,5 @@
 //set up the server
+const DEBUG = true;
 const db = require("./db/db_connection");
 const express = require( "express" );
 const app = express();
@@ -42,21 +43,30 @@ app.get('/authtest', (req, res) => {
 
 
 
-const read_stuff_all_sql = 
+const read_all_sql = 
 `SELECT
-    id, name, arrival, DATE_FORMAT(a_date, "%M %D, %Y") as a_date, DATE_FORMAT(d_date, "%M %D, %Y") as d_date, locations
+    e.id, e.name as employee_name, salary, location, rank.name as rank_name
 FROM
-    stuff
+    employee as e
+JOIN 
+    rank as r on e.rankid = r.id
+WHERE
+    s.userid = ?
+`
+const read_rank_all_sql = 
+`SELECT
+    id, name
+FROM 
+    rank
 WHERE
     userid = ?
 `
 
-
 const read_item_sql=
     `Select
-        id, name, arrival, DATE_FORMAT(a_date, "%M %D, %Y") as a_date, DATE_FORMAT(d_date, "%M %D, %Y") as d_date, locations
+        id, name, DATE_FORMAT(start_date, "%M %D, %Y") as start_date, location, salary
     From 
-        stuff
+        employee
     Where 
         id = ?
     And
@@ -66,7 +76,7 @@ const read_item_sql=
 const delete_item_sql = `
     delete
     from
-        stuff
+        employee
     where     
         id = ?
     and
@@ -74,21 +84,22 @@ const delete_item_sql = `
     `
 
 const insert_item_sql = `
-    insert into stuff
-        (name, arrival, a_date, d_date, userid)
+    insert into employee
+        (name, start_date, salary, location, userid, rankid)
     values
-        (?, ?, ?, ?, ?)
+        (?, ?, ?, ?, ?, ?)
     `
 
 const update_item_sql = `
     UPDATE
-        stuff
+        employee
     SET
         name = ?,
-        arrival = ?,
-        a_date = ?,
-        d_date = ?,
-        locations = ?
+        start_date = ?,
+        salary = ?,
+        location = ?,
+        userid = ?
+        rankid = ?
     WHERE
         id = ?
     AND
@@ -97,7 +108,7 @@ const update_item_sql = `
 `
 
 app.post("/list/item/:id", ( req, res) => {
-    db.execute(update_item_sql, [req.body.name, req.body.arrival, req.body.a_date, req.body.d_date, req.body.locations, req.params.id, req.oidc.user.email], (error, results) => {
+    db.execute(update_item_sql, [req.body.name, req.body.start_date, req.body.salary, req.body.location, req.body.userid, req.params.rankid, req.oidc.user.email], (error, results) => {
         if (error)
             res.status(500).send(error);
         else {
@@ -112,11 +123,22 @@ app.get( "/", requiresAuth(), ( req, res ) => {
 } );
 
 app.get( "/list", requiresAuth(), ( req, res ) => {
-    db.execute(read_stuff_all_sql, [req.oidc.user.email], (error, results) => {
+    db.execute(read_all_sql, [req.oidc.user.email], (error, results) => {
+        console.log(req.oidc.user.email);
+        if (DEBUG)
+            console.log(error ? error : results);
         if (error){
             res.status(500).send(error);                            
         }else{
-            res.render('list', {inventory : results});
+            db.execute(read_category_all_sql, [req.oidc.user.email], (error, categories) => {
+                if (error){
+                    res.status(500).send(error);
+                }else{
+                    let data = {all: results, category: categories};
+                    res.render('list', data);
+                }
+            });
+            
         }
     });
     
@@ -132,7 +154,7 @@ app.get( "/list/item/:id", requiresAuth(), ( req, res, next) => {
         }else{
             let data = results[0]
             res.render("item", data);
-        }
+        } 
     })
 } );
 
