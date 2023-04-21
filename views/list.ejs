@@ -53,26 +53,25 @@
                     <th>Arrival Location</th>
                     <th>Start Date</th>
                     <th>End Date</th>
-                    <th></th>
+                    <th>Category</th>
                 </tr>
 
             </thead>
-            <tbody>
-
-                <% for (let i = 0; i < inventory.length; i++) { %>
+            <tbody>                
+                    <% for (let i = 0; i < all.length; i++) { %>
                     <tr>
-                        <td> <%= inventory[i].name %></td>
-                        <td> <%= inventory[i].arrival %></td>
-                        <td> <%= inventory[i].a_date %></td>
-                        <td> <%= inventory[i].d_date %></td>
+                        <td> <%= all[i].name %></td>
+                        <td> <%= all[i].arrival %></td>
+                        <td> <%= all[i].a_date %></td>
+                        <td> <%= all[i].d_date %></td>
                         <td>
                             <a class = "btn-small waves-effect waves-light" 
-                                    href = <%= "/list/item/" + inventory[i].id %>>
+                                    href = <%= "/list/item/" + all[i].id %>>
                                 <i class = "material-icons right">edit</i>Info/Edit
                             </a>
                 
                             <a class = "btn-small waves-effect waves-light red"
-                                href = "/list/item/<%=inventory[i].id %> + /delete" %>>
+                                href = "/list/item/<%=all[i].id %> + /delete" %>>
                                 <i class = "material-icons right">delete</i>Delete
                             </a>
                 
@@ -106,6 +105,41 @@
                 <div class = "End Date col s6">
                     End Date:
                     <input name = "edate" placeholder="End Date" id="End Date" type="date" class="validate" required>
+                </div>
+
+                <div class="input-field col s6">
+                    <select id="subjectInput" name="subject" required>
+                        <option value="" disabled selected>Choose your subject</option>
+                        <option value=1>Comp Sci</option>
+                        <option value=2>Math</option>
+                        <option value=3>Language</option>
+                        <option value=4>Music</option>
+                        <option value=5>Biology</option>
+                        <option value=6>History</option>
+                        <% for (let i = 0; i < all.length; i++) { %>
+                            <tr>
+                                <td> <%= all[i].itemname %></td>
+                                <td> <%= all[i].arrival %></td>
+                                <td> <%= all[i].a_date %></td>
+                                <td> <%= all[i].d_date %></td>
+                                <td> <%= all[i].categoryname %></td>
+                                <td>
+                                    <a class = "btn-small `                                                                                                                     waves-effect waves-light" 
+                                            href = <%= "/list/item/" + all[i].id %>>
+                                        <i class = "material-icons right">edit</i>Info/Edit
+                                    </a>
+                        
+                                    <a class = "btn-small waves-effect waves-light red"
+                                        href = "/list/item/<%=all[i].id %> + /delete" %>>
+                                        <i class = "material-icons right">delete</i>Delete
+                                    </a>
+                        
+                                </td>
+                            </tr>                                               
+                        <% } %>
+                       
+                    </select>
+                    <label for="subjectInput">Subject:</label>
                 </div>
                 
                 <br>
