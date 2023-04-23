@@ -41,54 +41,52 @@ app.get('/authtest', (req, res) => {
     res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
   });
 
+  const read_all_sql = 
+  `SELECT
+      e.id, e.name as employee_name, DATE_FORMAT(start_date, "%M %D, %Y") as start_date, salary, location, r.name as rank_name
+  FROM
+      employee as e
+  JOIN 
+      rank as r on e.rankid = r.id
+  WHERE
+      e.userid = ?
+  `
+  const read_rank_all_sql = 
+  `SELECT
+      id, name
+  FROM 
+      rank
+  WHERE
+      userid = ? or id = -1
+  `
 
-
-const read_all_sql = 
-`SELECT
-    e.id, e.name as employee_name, salary, location, rank.name as rank_name
-FROM
-    employee as e
-JOIN 
-    rank as r on e.rankid = r.id
-WHERE
-    s.userid = ?
-`
-const read_rank_all_sql = 
-`SELECT
-    id, name
-FROM 
-    rank
-WHERE
-    userid = ?
-`
-
-const read_item_sql=
-    `Select
-        id, name, DATE_FORMAT(start_date, "%M %D, %Y") as start_date, location, salary
-    From 
-        employee
-    Where 
-        id = ?
-    And
-        userid = ?        
-`
-
-const delete_item_sql = `
-    delete
-    from
-        employee
-    where     
-        id = ?
-    and
-        userid = ?
-    `
-
-const insert_item_sql = `
-    insert into employee
-        (name, start_date, salary, location, userid, rankid)
-    values
-        (?, ?, ?, ?, ?, ?)
-    `
+  app.get( "/ranks", requiresAuth(), ( req, res ) => {
+    db.execute(read_rank_all_sql, [req.oidc.user.email], (error, results) => {
+        if (error){
+            res.status(500).send(error);
+        }else{
+            let data = {all: results}
+            res.render('ranks', data);
+        }
+    });
+  });
+  
+  app.get( "/list", requiresAuth(), ( req, res ) => {
+      db.execute(read_all_sql, [req.oidc.user.email], (error1, results) => {
+          if (error1){
+              res.status(500).send(error1);                            
+          }else{
+              db.execute(read_rank_all_sql, [req.oidc.user.email], (error2, ranks) => {
+                  if (error2){
+                      res.status(500).send(error2);
+                  }else{
+                      let data = {all: results, rank: ranks};
+                      res.render('list', data);
+                  }
+              });
+          }
+      });
+  } );
 
 const update_item_sql = `
     UPDATE
@@ -98,7 +96,6 @@ const update_item_sql = `
         start_date = ?,
         salary = ?,
         location = ?,
-        userid = ?
         rankid = ?
     WHERE
         id = ?
@@ -108,7 +105,7 @@ const update_item_sql = `
 `
 
 app.post("/list/item/:id", ( req, res) => {
-    db.execute(update_item_sql, [req.body.name, req.body.start_date, req.body.salary, req.body.location, req.body.userid, req.params.rankid, req.oidc.user.email], (error, results) => {
+    db.execute(update_item_sql, [req.body.name, req.body.start_date, req.body.salary, req.body.location, req.body.rankid, req.params.id, req.oidc.user.email], (error, results) => {
         if (error)
             res.status(500).send(error);
         else {
@@ -122,41 +119,48 @@ app.get( "/", requiresAuth(), ( req, res ) => {
     res.render("index");
 } );
 
-app.get( "/list", requiresAuth(), ( req, res ) => {
-    db.execute(read_all_sql, [req.oidc.user.email], (error, results) => {
-        console.log(req.oidc.user.email);
-        if (DEBUG)
-            console.log(error ? error : results);
-        if (error){
-            res.status(500).send(error);                            
-        }else{
-            db.execute(read_category_all_sql, [req.oidc.user.email], (error, categories) => {
-                if (error){
-                    res.status(500).send(error);
-                }else{
-                    let data = {all: results, category: categories};
-                    res.render('list', data);
-                }
-            });
-            
-        }
-    });
-    
-} );
 
-// define a route for the item  detail page
+const read_item_sql=
+    `Select
+        e.id as id, e.name as employee_name, DATE_FORMAT(start_date, "%M %D, %Y") as start_date, start_date as unformatted_start_date, salary, location, r.name as rank_name, r.id as rank_id
+    From 
+        employee as e
+    join 
+        rank as r on e.rankid = r.id
+    Where 
+        e.id = ?
+    And
+        e.userid = ?        
+`
 app.get( "/list/item/:id", requiresAuth(), ( req, res, next) => {
-    db.execute(read_item_sql, [req.params.id, req.oidc.user.email], (error, results) => {
-        if (error){
-            res.status(500).send(error);                            
+    db.execute(read_item_sql, [req.params.id, req.oidc.user.email], (error1, results) => {
+        if (error1){
+            res.status(500).send(error1);                            
         }else if (results.length === 0){
             res.status(404).send(`No item found with id = ${req.params.id}`)
         }else{
-            let data = results[0]
-            res.render("item", data);
+            db.execute(read_rank_all_sql, [req.oidc.user.email], (error2, ranks) => {
+                if (error2){
+                    res.status(500).send(error2);
+                }else{
+                    let data = {details: results[0], rank: ranks}
+                    res.render("item", data);
+                }
+            })
+            
         } 
     })
 } );
+
+const delete_item_sql = `
+    delete
+    from
+        employee
+    where     
+        id = ?
+    and
+        userid = ?
+    `
 
 app.get("/list/item/:id/delete", requiresAuth(), ( req, res) => {
     db.execute(delete_item_sql, [req.params.id, req.oidc.user.email], (error, results) => {
@@ -168,8 +172,14 @@ app.get("/list/item/:id/delete", requiresAuth(), ( req, res) => {
     });
 })
 
+const insert_item_sql = `
+    insert into employee
+        (name, start_date, salary, location, userid, rankid)
+    values
+        (?, ?, ?, ?, ?, ?)
+    `
 app.post("/list", requiresAuth(), ( req, res) => {
-    db.execute(insert_item_sql, [req.body.name, req.body.arrival, req.body.sdate, req.body.edate, req.oidc.user.email], (error, results) => {
+    db.execute(insert_item_sql, [req.body.name, req.body.start_date, req.body.salary, req.body.location, req.oidc.user.email, req.body.rankid], (error, results) => {
         if (error)
             res.status(500).send(error);
         else{
@@ -178,7 +188,11 @@ app.post("/list", requiresAuth(), ( req, res) => {
     });
 })
 
-// start the server
+const insert_rank_sql = `
+    insert into rank
+        (name, id, userid)
+    values (?, ?, ?)
+`
 app.listen( port, () => {
     console.log(`App server listening on ${ port }. (Go to http://localhost:${ port })` );
 } );

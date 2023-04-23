@@ -12,70 +12,44 @@
     <link rel="stylesheet" href="/stylesheets/stuffStyle.css">
 </head>
 <tbody>
-    <header>
-        <nav>
-            <div class="nav-wrapper">
-                <a href="/" class="brand-logo">Travel Planner</a>
-                <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                <ul id="desktop-nav" class="right hide-on-med-and-down">
-                    <li><a href="/"><i class="material-icons left">home</i>Home</a></li>
-                    <li><a href="/list"><i class="material-icons left">list</i>Inventory</a></li>
-                    <% if (isLoggedIn) { %>
-                        <li><a href="/profile"><i class="material-icons left">person</i> Hello, <%=user.name%></a> </li>
-                        <li><a href="/logout" class="btn red">Logout</a></li>                        
-                    <% } else { %>
-                        <li><a href="/login" class="btn blue">Login</a></li>
-                    <% } %>
-                </ul>
-            </div>
-        </nav>
-        <ul id="mobile-nav" class="sidenav">
-             <li><a href="/"><i class="material-icons left">home</i>Home</a></li>
-             <li><a href="/list"><i class="material-icons left">list</i>Inventory</a></li>
-             <% if (isLoggedIn) { %>
-                <li><a href="/profile"><i class="material-icons left">person</i> Hello, <%=user.name%></a> </li>
-                <li><a href="/logout" class="btn red">Logout</a></li>                        
-            <% } else { %>
-                <li><a href="/login" class="btn blue">Login</a></li>
-            <% } %>
-        </ul>
-    </header>
+    <%- include('partials/navbar') %>
     
     <div class = "container">
-        <h2>Trip Details:</h2>
+        <h2>Employee Details:</h2>
 
         <div class = "flow-text">
             <a class="btn-small waves-effect waves-light flow-text" href="/list">
                 <i class="material-icons left">arrow_back_ios</i>
-                Return to Plans
+                Return to Employees
             </a>
         </div>
 
         <table>
             <tr>
-                <th>Trip Name: </th>
-                <td> <%= name %></td>
+                <th>Employee Name: </th>
+                <td> <%= details.employee_name %></td>
+            </tr>
+            <tr>
+                <th>Location: </th>
+                <td> <%= details.location %></td>
                 <td>  </td>
             </tr>
     
             <tr>
-                <th>Arrival Location: </th>
-                <td> <%= arrival %></td>
+                <th>Start Date: </th>
+                <td> <%= details.start_date %></td>
             </tr>
     
             <tr>
-                <th>Arrival Date: </th>
-                <td> <%= a_date %> </td>
+                <th>Salary: </th>
+                <td> <%= details.salary %> </td>
             </tr>
     
             <tr>
-                <th>End Date: </th>
-                <td><%= d_date %></td>
+                <th>Rank: </th>
+                <td><%= details.rank_name %></td>
             </tr>
-            <tr>
-                <th>Locations to visit: </th>
-                <td><%= locations %></td>
-            </tr>
+            
         </table>
         
         
@@ -88,18 +62,18 @@
 
             <div id="modal1" class="modal">
                 <div class="modal-content">
-                    <h4>Edit Trip</h4>
-                    <form method = "post" action="/list/item/<%= id %>">
+                    <h4>Edit Employee</h4>
+                    <form method = "post" action="/list/item/<%= details.id %>">
                         <div class = "row">
                             <div class = "input-field col s6">
-                                <h6>Trip Name:</h6>
+                                <h6>Employee Name:</h6>
                                 <input type = "text" name = "name" class = "validate" date-length = "32"
-                                       value= "<%= name %>" required>
+                                       value= "<%= details.employee_name %>" required>
                             </div>
                             
                             <div class = "input-field col s6">
-                                <h6>Arrival:</h6>
-                                <input value= "<%= arrival %>" name ="arrival" type="text" class="validate">
+                                <h6>Location:</h6>
+                                <input value= "<%= details.location %>" name ="location" type="text" class="validate">
                             </div>
                             <br>
                         </div>
@@ -107,22 +81,30 @@
                         <div class = "row">
                             <div class = "input-field col s6">
                                 <h6>Start Date:</h6>
-                                <input value= "<%= a_date %>" name="a_date" type="date" class="validate" >
+                                <input value= "<%= details.unformatted_start_date %>" name="start_date" type="date" class="validate" >
                             </div>
         
                             <div class = "input-field col s6">
-                                <h6>End Date:</h6>
-                                <input value= "<%= d_date %>" name="d_date" type="date" class="validate" >
+                                <h6>Salary:</h6>
+                                <input value= "<%= details.salary %>" name="salary" type="number" class="validate" >
                             </div>                            
                             <br>
                         </div>
-
-                        <div class = "row">
-                            <h6>Locations to visit:</h6>
-                            <input value = "<%= locations %>" name = "locations" type = "text" class = "validate">
-
-                        </div>
                         
+                        <div class="input-field col s6">
+                            <select id="rankInput" name="rankid" required>
+                            <option value=-1 disabled>Choose employee rank</option>
+                            
+                            <% for (let i = 0; i < rank.length; i++) { %>
+                                <%if (details.rank_id != rank[i].id){%>
+                                    <option value = <%= rank[i].id %>><%= rank[i].name %> </option>
+                                <%} else {%>
+                                    <option selected value= <%rank[i].id%> ><%= rank[i].name%></option>
+                                <%}%>
+                            <% } %>                       
+                            </select>
+                            <label for="subjectInput">Subject:</label>
+                        </div>                     
                             
                         <div class = "modal-footer">
                             <div class="modal-footer">
@@ -145,7 +127,7 @@
               </div>
 
             <a class="btn-large waves-effect waves-light flow-text col push-s8 col s2 red" 
-                href="/list/item/<%= id %> + /delete">
+                href="/list/item/<%= details.id %> + /delete">
                 <i class="material-icons left">delete</i>
                 Delete
             </a>

@@ -11,12 +11,10 @@ const create_employee_table_sql = `
         salary INT NULL,
         location VARCHAR(150) NULL,
         userid VARCHAR(50) NOT NULL,
-        rankid INT NOT NULL,
+        rankid INT NULL,
         PRIMARY KEY (id),
         FOREIGN KEY (rankid)
             REFERENCES rank (id)
-            ON DELETE RESTRICT
-            ON UPDATE CASCADE
     );
 `
 const create_rank_table_sql = `
