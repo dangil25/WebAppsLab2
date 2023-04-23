@@ -18,15 +18,15 @@ const insert_rank_sql = `
     VALUES 
         (?, ?, ?);
 `
-db.execute(insert_rank_sql, [-1, 'None', null])
-db.execute(insert_rank_sql, [1, 'A', 'dangil25@bergen.org']);
+db.execute(insert_rank_sql, [-4, 'None', 'admin'])
+db.execute(insert_rank_sql, [-2, 'CEO', 'admin']);
+db.execute(insert_rank_sql, [-3, 'General Manager', 'admin']);
+db.execute(insert_rank_sql, [-1, 'Associate', 'admin']);
 
-db.execute(insert_rank_sql, [2, 'B', 'dangil25@bergen.org']);
-
-db.execute(insert_rank_sql, [3, 'C', 'dangil25@bergen.org']);
-
-db.execute(insert_rank_sql, [4, 'D', 'dangil25@bergen.org']);
-
+db.execute(insert_rank_sql, [1, 'IT specialist', 'dangil25@bergen.org']);
+db.execute(insert_rank_sql, [2, 'CFO', 'dangil25@bergen.org']);
+db.execute(insert_rank_sql, [3, 'Secretary', 'dangil25@bergen.org']);
+db.execute(insert_rank_sql, [4, 'HR', 'dangil25@bergen.org']);
 
 const insert_employee_sql = `
     INSERT INTO employee

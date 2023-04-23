@@ -15,4 +15,60 @@
 </head>
 <tbody>
 <%- include('partials/navbar') %>
+<% let array = [];
+for(let i = 0; i < arr.length; i++) {
+    array.push(arr[i].id);
+} %>
+<div class = container>
+    <div class = "section" id = "ranklist">
+        <h3>Ranks</h3>
+        <table> 
+            <thead>
+                <th>Rank Name</th>
+            </thead>
+            <tbody>
+                <% for (let i = 0; i < ranks.length; i++) { %>
+                    <%if (ranks[i].id >= 0){%>
+                        <tr>
+                            <td> <%= ranks[i].name %></td>
+                            <td>
+                                <%if (array.indexOf(ranks[i].id) == -1){%>
+                                    <a class = "btn-small waves-effect waves-light red" 
+                                        href = "/ranks/<%=ranks[i].id %> + /delete" %>>
+                                        <i class = "material-icons right">delete</i>Delete
+                                    </a>
+                                    <td>
+                                        This rank is not in use and can be deleted
+                                    </td>
+                                <% } else{ %>
+                                    <a class = "disabled btn-small waves-effect waves-light red" 
+                                        href = "/ranks/<%=ranks[i].id %> + /delete" %>>
+                                        <i class = "material-icons right">delete</i>Delete
+                                    </a>
+                                    <td>
+                                        This rank is in use, please make sure no employees are assigned this rank before deleting it.
+                                    </td>
+                                    
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% } %>
+                <% } %>           
+                
+            </tbody>
+    </table>
+    </div>
+
+    <div section = "Add New">
+        <h5>Add a Rank</h5>
+        <form method = "post" action = "/ranks">
+            <div class = "row">
+                <input name = "name" placeholder="Rank Name:" id="name" type="text" class="validate s1" required>
+            </div>
+            <button class="btn waves-effect waves-light row push-s2" type="submit" name="action">Submit
+                <i class="material-icons right">send</i>
+            </button>
+        </form>
+    </div>
+</div>
 </tbody>

@@ -41,6 +41,12 @@ app.get('/authtest', (req, res) => {
     res.send(req.oidc.isAuthenticated() ? 'Logged in' : 'Logged out');
   });
 
+app.get( "/", requiresAuth(), ( req, res ) => {
+    console.log("GET /");
+    res.render("index");
+} );
+
+//Main Page
   const read_all_sql = 
   `SELECT
       e.id, e.name as employee_name, DATE_FORMAT(start_date, "%M %D, %Y") as start_date, salary, location, r.name as rank_name
@@ -57,19 +63,8 @@ app.get('/authtest', (req, res) => {
   FROM 
       rank
   WHERE
-      userid = ? or id = -1
+      userid = ? or id < 0
   `
-
-  app.get( "/ranks", requiresAuth(), ( req, res ) => {
-    db.execute(read_rank_all_sql, [req.oidc.user.email], (error, results) => {
-        if (error){
-            res.status(500).send(error);
-        }else{
-            let data = {all: results}
-            res.render('ranks', data);
-        }
-    });
-  });
   
   app.get( "/list", requiresAuth(), ( req, res ) => {
       db.execute(read_all_sql, [req.oidc.user.email], (error1, results) => {
@@ -88,6 +83,24 @@ app.get('/authtest', (req, res) => {
       });
   } );
 
+//ADD ITEM
+const insert_item_sql = `
+  insert into employee
+      (name, start_date, salary, location, userid, rankid)
+  values
+      (?, ?, ?, ?, ?, ?)
+  `
+app.post("/list", requiresAuth(), ( req, res) => {
+  db.execute(insert_item_sql, [req.body.name, req.body.start_date, req.body.salary, req.body.location, req.oidc.user.email, req.body.rankid], (error, results) => {
+      if (error)
+          res.status(500).send(error);
+      else{
+          res.redirect(`/list/item/${results.insertId}`);
+      }
+  });
+});
+
+//UPDATE
 const update_item_sql = `
     UPDATE
         employee
@@ -114,12 +127,9 @@ app.post("/list/item/:id", ( req, res) => {
     });
 })
 
-app.get( "/", requiresAuth(), ( req, res ) => {
-    console.log("GET /");
-    res.render("index");
-} );
 
 
+//INDIVIDAL ITEM
 const read_item_sql=
     `Select
         e.id as id, e.name as employee_name, DATE_FORMAT(start_date, "%M %D, %Y") as start_date, start_date as unformatted_start_date, salary, location, r.name as rank_name, r.id as rank_id
@@ -152,6 +162,7 @@ app.get( "/list/item/:id", requiresAuth(), ( req, res, next) => {
     })
 } );
 
+//DELETE ITEM
 const delete_item_sql = `
     delete
     from
@@ -170,29 +181,72 @@ app.get("/list/item/:id/delete", requiresAuth(), ( req, res) => {
             res.redirect("/list");
         }
     });
-})
+});
 
-const insert_item_sql = `
-    insert into employee
-        (name, start_date, salary, location, userid, rankid)
+//READ RANKS
+const rank_use_test = `
+SELECT r.id
+    from rank as r
+    join employee as e on r.id = e.rankid
+    where r.userid = ?
+`
+app.get( "/ranks", requiresAuth(), ( req, res ) => {
+    db.execute(read_rank_all_sql, [req.oidc.user.email], (error1, results) => {
+        if (error1){
+            res.status(500).send(error1);
+        }else{
+            db.execute(rank_use_test, [req.oidc.user.email], (error2, inuse) => {
+                if (error2){
+                    res.status(500).send(error2);
+                }else{
+                    let data = {ranks: results, arr: inuse};
+                    console.log(inuse);
+                    res.render('ranks', data);
+                }
+            });
+        }
+    });
+  });
+
+//DELETE RANK
+const delete_rank_sql = `
+    delete from 
+        rank
+    where 
+        id = ?
+    and
+        userid = ?
+`
+
+
+app.get("/ranks/:id/delete", requiresAuth(), (req, res) => {
+    db.execute(delete_rank_sql, [req.params.id, req.oidc.user.email], (error, results) => {
+        if (error)
+            res.status(500).send(error);
+        else {
+            res.redirect("/ranks");
+        }
+    });
+});
+
+//ADD RANKS
+const insert_rank_sql = `
+    insert into rank
+        (name, userid)
     values
-        (?, ?, ?, ?, ?, ?)
-    `
-app.post("/list", requiresAuth(), ( req, res) => {
-    db.execute(insert_item_sql, [req.body.name, req.body.start_date, req.body.salary, req.body.location, req.oidc.user.email, req.body.rankid], (error, results) => {
+        (?, ?)
+`
+app.post("/ranks", requiresAuth(), ( req, res) => {
+    db.execute(insert_rank_sql, [req.body.name,req.oidc.user.email], (error, results) => {
         if (error)
             res.status(500).send(error);
         else{
-            res.redirect(`/list/item/${results.insertId}`);
+            res.redirect(`/ranks`);
         }
     });
-})
+});
 
-const insert_rank_sql = `
-    insert into rank
-        (name, id, userid)
-    values (?, ?, ?)
-`
+
 app.listen( port, () => {
     console.log(`App server listening on ${ port }. (Go to http://localhost:${ port })` );
 } );
