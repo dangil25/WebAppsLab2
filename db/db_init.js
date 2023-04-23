@@ -29,6 +29,17 @@ const create_rank_table_sql = `
 db.execute(create_rank_table_sql);
 db.execute(create_employee_table_sql);
 
+const insert_rank_sql = `
+    INSERT INTO rank
+        (id, name, userid) 
+    VALUES 
+        (?, ?, ?);
+`
+db.execute(insert_rank_sql, [-4, 'None', 'admin'])
+db.execute(insert_rank_sql, [-2, 'CEO', 'admin']);
+db.execute(insert_rank_sql, [-3, 'General Manager', 'admin']);
+db.execute(insert_rank_sql, [-1, 'Associate', 'admin']);
+
 
 db.end();
 
