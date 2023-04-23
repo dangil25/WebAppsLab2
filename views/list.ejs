@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel List</title>
+    <title>Employee Manager</title>
 
     <!-- Materialize CSS and Icons-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -14,56 +14,30 @@
     
 </head>
 <tbody>
-    <header>
-        <nav>
-            <div class="nav-wrapper">
-                <a href="/" class="brand-logo">Travel Planner</a>
-                <a href="#" data-target="mobile-nav" class="sidenav-trigger"><i class="material-icons">menu</i></a>
-                <ul id="desktop-nav" class="right hide-on-med-and-down">
-                    <li><a href="/"><i class="material-icons left">home</i>Home</a></li>
-                    <li><a href="/list"><i class="material-icons left">list</i>Inventory</a></li>
-                    <% if (isLoggedIn) { %>
-                        <li><a href="/profile"><i class="material-icons left">person</i> Hello, <%=user.name%></a> </li>
-                        <li><a href="/logout" class="btn red">Logout</a></li>                        
-                    <% } else { %>
-                        <li><a href="/login" class="btn blue">Login</a></li>
-                    <% } %>
-                </ul>
-            </div>
-        </nav>
-        <ul id="mobile-nav" class="sidenav">
-             <li><a href="/"><i class="material-icons left">home</i>Home</a></li>
-             <li><a href="/list"><i class="material-icons left">list</i>Inventory</a></li>
-             <% if (isLoggedIn) { %>
-                <li><a href="/profile"><i class="material-icons left">person</i> Hello, <%=user.name%></a> </li>
-                <li><a href="/logout" class="btn red">Logout</a></li>                        
-            <% } else { %>
-                <li><a href="/login" class="btn blue">Login</a></li>
-            <% } %>
-        </ul>
-    </header>
+<%- include('partials/navbar') %>
 <div class="container">
     <div class="section" id="travelList">
-        <h3>Travel List:</h3>
+        <h3>Employee List:</h3>
         <table>
             <thead>
 
                 <tr>
-                    <th>Trip</th>
-                    <th>Arrival Location</th>
-                    <th>Start Date</th>
-                    <th>End Date</th>
-                    <th>Category</th>
+                    <th>Name</th>
+                    <th>Location</th>
+                    <th>Starting Date</th>
+                    <th>Salary</th>
+                    <th>Rank</th>
                 </tr>
 
             </thead>
             <tbody>                
                     <% for (let i = 0; i < all.length; i++) { %>
                     <tr>
-                        <td> <%= all[i].name %></td>
-                        <td> <%= all[i].arrival %></td>
-                        <td> <%= all[i].a_date %></td>
-                        <td> <%= all[i].d_date %></td>
+                        <td> <%= all[i].employee_name %></td>
+                        <td> <%= all[i].location %></td>
+                        <td> <%= all[i].start_date %></td>
+                        <td> <%= all[i].salary %></td>
+                        <td> <%= all[i].rank_name %></td>
                         <td>
                             <a class = "btn-small waves-effect waves-light" 
                                     href = <%= "/list/item/" + all[i].id %>>
@@ -83,61 +57,36 @@
     </div>
 
     <div section = "Add New">
-        <h5>Add a Trip:</h5>
+        <h5>Add an Employee:</h5>
         <form method = "post" action="/list">
             <div class = "row">
-                <div class = "Name col s6">
-                    <input name = "name" placeholder="Trip Name:" id="Trip Name" type="text" class="validate s1" required>
+                <div class = "col s6">
+                    <input name = "name" placeholder="Employee Name:" id="name" type="text" class="validate s1" required>
                 </div>
                 
-                <div class = "Location col s6">
-                    <input name = "arrival" placeholder="Arrival Location:" id="Location" type="text" class="validate s4" required>
+                <div class = "col s6">
+                    <input name = "location" placeholder="Location:" id="location" type="text" class="validate s4" required>
                 </div>
                 <br>
             </div>
             
             <div class = "row">
-                <div class = "Start Date col s6">
+                <div class = "col s6">
                     Start Date:
-                    <input name = "sdate" placeholder="Start Date" id="Start Date" type="date" class="validate" required>
+                    <input name = "start_date" id="start_date" type="date" class="validate" required>
                 </div>
 
-                <div class = "End Date col s6">
-                    End Date:
-                    <input name = "edate" placeholder="End Date" id="End Date" type="date" class="validate" required>
+                <div class = "col s6">
+                    Salary:
+                    <input name = "salary" placeholder=0 id="salary" type="number" class="validate" required>
                 </div>
 
                 <div class="input-field col s6">
-                    <select id="subjectInput" name="subject" required>
-                        <option value="" disabled selected>Choose your subject</option>
-                        <option value=1>Comp Sci</option>
-                        <option value=2>Math</option>
-                        <option value=3>Language</option>
-                        <option value=4>Music</option>
-                        <option value=5>Biology</option>
-                        <option value=6>History</option>
-                        <% for (let i = 0; i < all.length; i++) { %>
-                            <tr>
-                                <td> <%= all[i].itemname %></td>
-                                <td> <%= all[i].arrival %></td>
-                                <td> <%= all[i].a_date %></td>
-                                <td> <%= all[i].d_date %></td>
-                                <td> <%= all[i].categoryname %></td>
-                                <td>
-                                    <a class = "btn-small `                                                                                                                     waves-effect waves-light" 
-                                            href = <%= "/list/item/" + all[i].id %>>
-                                        <i class = "material-icons right">edit</i>Info/Edit
-                                    </a>
-                        
-                                    <a class = "btn-small waves-effect waves-light red"
-                                        href = "/list/item/<%=all[i].id %> + /delete" %>>
-                                        <i class = "material-icons right">delete</i>Delete
-                                    </a>
-                        
-                                </td>
-                            </tr>                                               
-                        <% } %>
-                       
+                    <select id="rankInput" name="rankid" required>
+                    <option value=1 disabled selected>Choose employee rank</option>
+                    <% for (let i = 0; i < rank.length; i++) { %>
+                        <option value = <%= rank[i].id %>><%= rank[i].name %> </option>
+                    <% } %>                       
                     </select>
                     <label for="subjectInput">Subject:</label>
                 </div>
